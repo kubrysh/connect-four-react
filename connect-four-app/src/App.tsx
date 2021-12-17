@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
 import GameBoard from "./components/GameBoard";
-import { checkWin } from "./utils/checkWin";
+import checkWin from "./utils/checkWin";
 import copyArray from "./utils/copyArray";
 
 function App() {
@@ -9,63 +9,86 @@ function App() {
     // Creating 2-D 6x7 array of nulls
     const initialBoard = Array(6).fill(Array(7).fill(0));
 
-    // const initialBoard = [
-    //     [null, null, null, null, null, null, null],
-    //     [null, null, 2, null, null, null, null],
-    //     [null, null, null, null, 1, null, null],
-    //     [null, 2, null, null, null, null, null],
-    //     [null, null, null, null, null, null, null],
-    //     [null, 1, null, null, 1, null, null],
-    //   ];
-
     const [boardState, setBoardState] = useState(initialBoard);
     const [currentPlayer, setCurrentPlayer] = useState(1);
-    const [gameInProgress, setGameInProgress] = useState(true);
+    const [gameEnded, setgameEnded] = useState(false);
+    const [message, setMessage] = useState("First Player's (Yellow) Move!")
 
+    const initialRender = useRef(true);
+
+    // Checking for win or draft on each board state update
     useEffect(() => {
-        // Checking for win
-        const result = checkWin(boardState);
-        console.log(result);
-    }, [boardState])
+        // Preventing checking the result on initial render
+        if (initialRender.current) {
+            initialRender.current = false;
+            return;
+        }
+        // Checking for a win & handling results
+        if (!gameEnded) {
+            const result = checkWin(boardState);
+            if (result) {
+                setgameEnded(true);
+            }
+            switch (result) {
+                case "1111":
+                    setMessage("First Player (Yellow) Won!");
+                    break;
+                case "2222":
+                    setMessage("Second Player (Red) Won!");
+                    break;
+                case "draft":
+                    setMessage("Draft!");
+                    break;
+            }
+            console.log(result);
+        }
+    }, [boardState, gameEnded])
 
     const togglePlayer = () => {
         if (currentPlayer === 1) {
             setCurrentPlayer(2);
+            setMessage("Second Player's (Red) Move!");
         } else if (currentPlayer === 2) {
             setCurrentPlayer(1);
+            setMessage("First Player's (Yellow) Move!")
         }
     }
 
     const resetGame = () => {
         setBoardState(initialBoard);
         setCurrentPlayer(1);
-        setGameInProgress(true);
+        setgameEnded(false);
+        setMessage("First Player's (Yellow) Move!");
     }
 
     const handleMove = (columnIndex:any) => {
-
         // Making move
-        const boardClone = copyArray(boardState);
-        for (let i = 5; i >= 0; i--) {
-            if (boardClone[i][columnIndex] === 0) {
-                boardClone[i][columnIndex] = currentPlayer;
-                setBoardState(boardClone);
-                break;
+        if (!gameEnded) {
+            // Making deep copy of the board
+            const boardClone = copyArray(boardState);
+            for (let i = 5; i >= 0; i--) {
+                if (boardClone[i][columnIndex] === 0) {
+                    boardClone[i][columnIndex] = currentPlayer;
+                    setBoardState(boardClone);
+                    break;
+                }
             }
-        }
 
-        // Switchng player
-        togglePlayer();
+            // Switching player
+            togglePlayer();
+        }
     }
 
     return (
         <div className="app">
             <header>
                 <h1>Connect Four Game</h1>
-                <button onClick={resetGame}>New game</button>
             </header>
             <main>
-                <p>Message</p>
+                <div className="game-info-container">
+                    <p>{message}</p>
+                    <button onClick={resetGame}>New game</button>
+                </div>
                 <div className="game-board">
                     <GameBoard board={boardState} handleMove={handleMove} />
                 </div>
