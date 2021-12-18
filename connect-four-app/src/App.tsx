@@ -1,17 +1,88 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useReducer, useEffect, useRef } from "react";
 import "./App.css";
 import GameBoard from "./components/GameBoard";
 import checkWin from "./utils/checkWin";
 import copyArray from "./utils/copyArray";
 
-const App = () => {
-    // Creating 6x7 matrix of zeros which will be representing game cells
-    const initialBoard = Array(6).fill(Array(7).fill(0));
+const messages = {
+    player1Turn: "First Player's (Yellow) Move!",
+    player2Turn: "Second Player's (Red) Move!",
+    player1Won: "First Player (Yellow) Won!",
+    player2Won: "Second Player (Red) Won!",
+    draft: "Draft!"
+};
 
-    const [boardState, setBoardState] = useState(initialBoard);
-    const [currentPlayer, setCurrentPlayer] = useState(1);
-    const [gameEnded, setgameEnded] = useState(false);
-    const [message, setMessage] = useState("First Player's (Yellow) Move!");
+const initialGameState: any = {
+    board: Array(6).fill(Array(7).fill(0)), // Creating 6x7 matrix of zeros which will be representing game cells
+    currentPlayer: 1,
+    gameEnded: false,
+    message: messages.player1Turn
+};
+
+const gameStateReducer = (gameState: any, action: any) => {
+    switch (action.type) {
+        case "reset-game":
+            return initialGameState;
+        case "toggle-player":
+            switch (gameState.currentPlayer) {
+                case 1:
+                    return {
+                        ...gameState,
+                        currentPlayer: 2,
+                        message: messages.player2Turn
+                    };
+                case 2:
+                    return {
+                        ...gameState,
+                        currentPlayer: 1,
+                        message: messages.player1Turn
+                    };
+                default:
+                    return gameState;
+            }
+        case "end-game":
+            switch (action.result) {
+                case 1:
+                    return {
+                        ...gameState,
+                        gameEnded: true,
+                        message: messages.player1Won
+                    };
+                case 2:
+                    return {
+                        ...gameState,
+                        gameEnded: true,
+                        message: messages.player2Won
+                    };
+                case "draft":
+                    return {
+                        ...gameState,
+                        gameEnded: true,
+                        message: messages.draft
+                    };
+                default:
+                    return gameState;
+            }
+        case "make-move":
+            // Making deep copy of the board
+            const boardClone = copyArray(gameState.board);
+            for (let i = 5; i >= 0; i--) {
+                if (boardClone[i][action.columnIndex] === 0) {
+                    boardClone[i][action.columnIndex] = gameState.currentPlayer;
+                    return { ...gameState, board: boardClone };
+                }
+            }
+            return gameState;
+        default:
+            return gameState;
+    }
+};
+
+const App = () => {
+    const [gameState, dispatch] = useReducer(
+        gameStateReducer,
+        initialGameState
+    );
 
     const initialRender = useRef(true);
 
@@ -23,60 +94,32 @@ const App = () => {
             return;
         }
         // Checking for a win & handling results
-        if (!gameEnded) {
-            const result = checkWin(boardState);
+        if (!gameState.gameEnded) {
+            const result = checkWin(gameState.board);
             if (result) {
-                setgameEnded(true);
-            }
-            switch (result) {
-                case 1:
-                    setMessage("First Player (Yellow) Won!");
-                    break;
-                case 2:
-                    setMessage("Second Player (Red) Won!");
-                    break;
-                case "draft":
-                    setMessage("Draft!");
-                    break;
+                dispatch({ type: "end-game", result: result });
             }
         }
-    }, [boardState, gameEnded]);
-
-    const togglePlayer = () => {
-        switch (currentPlayer) {
-            case 1:
-                setCurrentPlayer(2);
-                setMessage("Second Player's (Red) Move!");
-                break;
-            case 2:
-                setCurrentPlayer(1);
-                setMessage("First Player's (Yellow) Move!");
-                break;
-        }
-    };
+    }, [gameState.board, gameState.gameEnded]);
 
     const resetGame = () => {
-        setBoardState(initialBoard);
-        setCurrentPlayer(1);
-        setgameEnded(false);
-        setMessage("First Player's (Yellow) Move!");
+        dispatch({
+            type: "reset-game"
+        });
     };
 
     const handleMove = (columnIndex: any) => {
-        // Making move
-        if (!gameEnded) {
-            // Making deep copy of the board
-            const boardClone = copyArray(boardState);
-            for (let i = 5; i >= 0; i--) {
-                if (boardClone[i][columnIndex] === 0) {
-                    boardClone[i][columnIndex] = currentPlayer;
-                    setBoardState(boardClone);
-                    break;
-                }
-            }
+        if (!gameState.gameEnded) {
+            // Making move
+            dispatch({
+                type: "make-move",
+                columnIndex: columnIndex
+            });
 
             // Switching player
-            togglePlayer();
+            dispatch({
+                type: "toggle-player"
+            });
         }
     };
 
@@ -88,10 +131,13 @@ const App = () => {
             <main>
                 <div className="game-info-container">
                     <button onClick={resetGame}>New game</button>
-                    <p>{message}</p>
+                    <p>{gameState.message}</p>
                 </div>
                 <div className="game-board">
-                    <GameBoard board={boardState} handleMove={handleMove} />
+                    <GameBoard
+                        board={gameState.board}
+                        handleMove={handleMove}
+                    />
                 </div>
             </main>
             <footer>
