@@ -87,8 +87,8 @@ const App = () => {
             </header>
             <main>
                 <div className="game-info-container">
-                    <p>{message}</p>
                     <button onClick={resetGame}>New game</button>
+                    <p>{message}</p>
                 </div>
                 <div className="game-board">
                     <GameBoard board={boardState} handleMove={handleMove} />
