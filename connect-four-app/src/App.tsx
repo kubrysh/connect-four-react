@@ -4,15 +4,14 @@ import GameBoard from "./components/GameBoard";
 import checkWin from "./utils/checkWin";
 import copyArray from "./utils/copyArray";
 
-function App() {
-
-    // Creating 2-D 6x7 array of nulls
+const App = () => {
+    // Creating 6x7 matrix of zeros which will be representing game cells
     const initialBoard = Array(6).fill(Array(7).fill(0));
 
     const [boardState, setBoardState] = useState(initialBoard);
     const [currentPlayer, setCurrentPlayer] = useState(1);
     const [gameEnded, setgameEnded] = useState(false);
-    const [message, setMessage] = useState("First Player's (Yellow) Move!")
+    const [message, setMessage] = useState("First Player's (Yellow) Move!");
 
     const initialRender = useRef(true);
 
@@ -30,38 +29,40 @@ function App() {
                 setgameEnded(true);
             }
             switch (result) {
-                case "1111":
+                case 1:
                     setMessage("First Player (Yellow) Won!");
                     break;
-                case "2222":
+                case 2:
                     setMessage("Second Player (Red) Won!");
                     break;
                 case "draft":
                     setMessage("Draft!");
                     break;
             }
-            console.log(result);
         }
-    }, [boardState, gameEnded])
+    }, [boardState, gameEnded]);
 
     const togglePlayer = () => {
-        if (currentPlayer === 1) {
-            setCurrentPlayer(2);
-            setMessage("Second Player's (Red) Move!");
-        } else if (currentPlayer === 2) {
-            setCurrentPlayer(1);
-            setMessage("First Player's (Yellow) Move!")
+        switch (currentPlayer) {
+            case 1:
+                setCurrentPlayer(2);
+                setMessage("Second Player's (Red) Move!");
+                break;
+            case 2:
+                setCurrentPlayer(1);
+                setMessage("First Player's (Yellow) Move!");
+                break;
         }
-    }
+    };
 
     const resetGame = () => {
         setBoardState(initialBoard);
         setCurrentPlayer(1);
         setgameEnded(false);
         setMessage("First Player's (Yellow) Move!");
-    }
+    };
 
-    const handleMove = (columnIndex:any) => {
+    const handleMove = (columnIndex: any) => {
         // Making move
         if (!gameEnded) {
             // Making deep copy of the board
@@ -77,7 +78,7 @@ function App() {
             // Switching player
             togglePlayer();
         }
-    }
+    };
 
     return (
         <div className="app">
@@ -98,6 +99,6 @@ function App() {
             </footer>
         </div>
     );
-}
+};
 
 export default App;

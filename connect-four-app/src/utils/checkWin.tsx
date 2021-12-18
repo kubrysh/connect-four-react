@@ -5,10 +5,9 @@ const checkHorizontally = (board: any) => {
     const matchedStrings = stringifiedBoard.match(/1{4}|2{4}/);
 
     if (matchedStrings) {
-        return matchedStrings[0];
-    } else {
-        return false;
+        return ~~matchedStrings[0][0];
     }
+    return false;
 };
 
 const checkVertically = (board: any) => {
@@ -20,11 +19,39 @@ const checkVertically = (board: any) => {
     return checkHorizontally(transposedBoard);
 };
 
-const checkDiagLeft = (board: any) => {
+const checkDiagLR = (board: any) => {
+    // Checking Left to Right 4 cell slices
+    for (let r = 3; r <= 5; r++) {
+        for (let c = 0; c <= 3; c++) {
+            if (board[r][c]) {
+                if (
+                    board[r][c] === board[r - 1][c + 1] &&
+                    board[r][c] === board[r - 2][c + 2] &&
+                    board[r][c] === board[r - 3][c + 3]
+                ) {
+                    return board[r][c];
+                }
+            }
+        }
+    }
     return false;
 };
 
-const checkDiagRight = (board: any) => {
+const checkDiagRL = (board: any) => {
+    // Checking Right to Left 4 cell slices
+    for (let r = 3; r <= 5; r++) {
+        for (let c = 3; c <= 6; c++) {
+            if (board[r][c]) {
+                if (
+                    board[r][c] === board[r - 1][c - 1] &&
+                    board[r][c] === board[r - 2][c - 2] &&
+                    board[r][c] === board[r - 3][c - 3]
+                ) {
+                    return board[r][c];
+                }
+            }
+        }
+    }
     return false;
 };
 
@@ -32,17 +59,16 @@ const checkDraft = (board: any) => {
     // Checking if there are none empty cells left
     if (board.length !== 0 && board.flat().every((cell: any) => cell !== 0)) {
         return "draft";
-    } else {
-        return false;
     }
+    return false;
 };
 
 const checkWin = (board: any) => {
     return (
         checkHorizontally(board) ||
         checkVertically(board) ||
-        checkDiagLeft(board) ||
-        checkDiagRight(board) ||
+        checkDiagLR(board) ||
+        checkDiagRL(board) ||
         checkDraft(board)
     );
 };
