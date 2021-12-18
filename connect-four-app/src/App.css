@@ -49,7 +49,8 @@ header > h1 {
     background-color: rgb(240, 128, 128, 0.8);
 }
 
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: 480px),
+            screen and (max-height: 480px) {
     .game-info-container {
         flex-direction: column;
     }
