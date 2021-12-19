@@ -1,7 +1,25 @@
-const Row = ({ row, handleMove }: any) => {
+type HandleMove = (columnIndex: number) => void;
+
+interface RowProps {
+    row: number[];
+    handleMove: HandleMove;
+}
+
+interface CellProps {
+    player: number;
+    columnIndex: number;
+    handleMove: HandleMove;
+}
+
+interface GameBoardProps {
+    board: number[][];
+    handleMove: HandleMove;
+}
+
+const Row = ({ row, handleMove }: RowProps) => {
     return (
         <div className="row">
-            {row.map((cell: any, index: any) => {
+            {row.map((cell: number, index: number) => {
                 return (
                     <Cell
                         player={cell}
@@ -15,7 +33,7 @@ const Row = ({ row, handleMove }: any) => {
     );
 };
 
-const Cell = ({ player, columnIndex, handleMove }: any) => {
+const Cell = ({ player, columnIndex, handleMove }: CellProps) => {
     return (
         <div
             onClick={() => handleMove(columnIndex)}
@@ -26,10 +44,14 @@ const Cell = ({ player, columnIndex, handleMove }: any) => {
     );
 };
 
-const GameBoard = ({ board, handleMove }: any) => {
-    return board.map((row: any, rowIndex: any) => {
-        return <Row row={row} handleMove={handleMove} key={rowIndex} />;
-    });
+const GameBoard = ({ board, handleMove }: GameBoardProps) => {
+    return (
+        <>
+            {board.map((row: number[], rowIndex: number) => {
+                return <Row row={row} handleMove={handleMove} key={rowIndex} />;
+            })}
+        </>
+    );
 };
 
 export default GameBoard;

@@ -1,6 +1,6 @@
-const checkHorizontally = (board: any) => {
+const checkHorizontally = (board: number[][]) => {
     // Stringifying board array
-    const stringifiedBoard = board.map((row: any) => row.join("")).join(",");
+    const stringifiedBoard = board.map((row) => row.join("")).join(",");
     // Testing for winning combinations
     const matchedStrings = stringifiedBoard.match(/1{4}|2{4}/);
 
@@ -10,16 +10,14 @@ const checkHorizontally = (board: any) => {
     return false;
 };
 
-const checkVertically = (board: any) => {
+const checkVertically = (board: number[][]) => {
     //Transposing board matrix
-    const transposedBoard = board[0].map((c: any, i: any) =>
-        board.map((r: any) => r[i])
-    );
+    const transposedBoard = board[0].map((c, i) => board.map((r) => r[i]));
     // Stringifying & testing for winning combinations
     return checkHorizontally(transposedBoard);
 };
 
-const checkDiagLR = (board: any) => {
+const checkDiagLR = (board: number[][]) => {
     // Checking Left to Right 4 cell slices
     for (let r = 3; r <= 5; r++) {
         for (let c = 0; c <= 3; c++) {
@@ -37,7 +35,7 @@ const checkDiagLR = (board: any) => {
     return false;
 };
 
-const checkDiagRL = (board: any) => {
+const checkDiagRL = (board: number[][]) => {
     // Checking Right to Left 4 cell slices
     for (let r = 3; r <= 5; r++) {
         for (let c = 3; c <= 6; c++) {
@@ -55,15 +53,15 @@ const checkDiagRL = (board: any) => {
     return false;
 };
 
-const checkDraft = (board: any) => {
+const checkDraft = (board: number[][]) => {
     // Checking if there are none empty cells left
-    if (board.length !== 0 && board.flat().every((cell: any) => cell !== 0)) {
+    if (board.length !== 0 && board.flat().every((cell) => cell !== 0)) {
         return "draft";
     }
     return false;
 };
 
-const checkWin = (board: any) => {
+const checkWin = (board: number[][]) => {
     return (
         checkHorizontally(board) ||
         checkVertically(board) ||

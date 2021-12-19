@@ -4,6 +4,19 @@ import GameBoard from "./components/GameBoard";
 import checkWin from "./utils/checkWin";
 import copyArray from "./utils/copyArray";
 
+interface GameState {
+    board: number[][];
+    currentPlayer: number;
+    gameEnded: boolean;
+    message: string;
+}
+
+type Action =
+    | { type: "reset-game" }
+    | { type: "toggle-player" }
+    | { type: "end-game"; result: number | string }
+    | { type: "make-move"; columnIndex: number }
+
 const messages = {
     player1Turn: "First Player's (Yellow) Move!",
     player2Turn: "Second Player's (Red) Move!",
@@ -12,14 +25,14 @@ const messages = {
     draft: "Draft!"
 };
 
-const initialGameState: any = {
+const initialGameState: GameState = {
     board: Array(6).fill(Array(7).fill(0)), // Creating 6x7 matrix of zeros which will be representing game cells
     currentPlayer: 1,
     gameEnded: false,
     message: messages.player1Turn
 };
 
-const gameStateReducer = (gameState: any, action: any) => {
+const gameStateReducer = (gameState: GameState, action: Action) => {
     switch (action.type) {
         case "reset-game":
             return initialGameState;
@@ -65,7 +78,7 @@ const gameStateReducer = (gameState: any, action: any) => {
             }
         case "make-move":
             // Making deep copy of the board
-            const boardClone = copyArray(gameState.board);
+            const boardClone: GameState["board"] = copyArray(gameState.board);
             for (let i = 5; i >= 0; i--) {
                 if (boardClone[i][action.columnIndex] === 0) {
                     boardClone[i][action.columnIndex] = gameState.currentPlayer;
@@ -108,7 +121,7 @@ const App = () => {
         });
     };
 
-    const handleMove = (columnIndex: any) => {
+    const handleMove = (columnIndex: number) => {
         if (!gameState.gameEnded) {
             // Making move
             dispatch({
