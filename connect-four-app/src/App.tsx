@@ -135,9 +135,9 @@ const App = () => {
             <main>
                 <div className="game-info-container">
                     <button onClick={resetGame}>New game</button>
-                    <p>{gameState.message}</p>
+                    <p data-testid="game-info">{gameState.message}</p>
                 </div>
-                <div className="game-board">
+                <div className="game-board" role="grid">
                     <GameBoard
                         board={gameState.board}
                         handleMove={handleMove}

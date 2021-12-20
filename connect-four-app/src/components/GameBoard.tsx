@@ -18,7 +18,7 @@ interface GameBoardProps {
 
 const Row = ({ row, handleMove }: RowProps) => {
     return (
-        <div className="row">
+        <div className="row" role="row">
             {row.map((cell: number, index: number) => {
                 return (
                     <Cell
@@ -37,9 +37,10 @@ const Cell = ({ player, columnIndex, handleMove }: CellProps) => {
     return (
         <div
             onClick={() => handleMove(columnIndex)}
-            className={`cell ${
-                player === 1 ? "is-yellow" : player === 2 ? "is-red" : ""
+            className={`cell${
+                player === 1 ? " is-yellow" : player === 2 ? " is-red" : ""
             }`}
+            role="gridcell"
         ></div>
     );
 };
