@@ -36,23 +36,6 @@ const gameStateReducer = (gameState: GameState, action: Action) => {
     switch (action.type) {
         case "reset-game":
             return initialGameState;
-        case "toggle-player":
-            switch (gameState.currentPlayer) {
-                case 1:
-                    return {
-                        ...gameState,
-                        currentPlayer: 2,
-                        message: messages.player2Turn
-                    };
-                case 2:
-                    return {
-                        ...gameState,
-                        currentPlayer: 1,
-                        message: messages.player1Turn
-                    };
-                default:
-                    return gameState;
-            }
         case "end-game":
             switch (action.result) {
                 case 1:
@@ -79,10 +62,23 @@ const gameStateReducer = (gameState: GameState, action: Action) => {
         case "make-move":
             // Making deep copy of the board
             const boardClone: GameState["board"] = copyArray(gameState.board);
+            // Checking if move is possible and implementing it
             for (let i = 5; i >= 0; i--) {
                 if (boardClone[i][action.columnIndex] === 0) {
                     boardClone[i][action.columnIndex] = gameState.currentPlayer;
-                    return { ...gameState, board: boardClone };
+                    // Switching player
+                    const nextPlayer = gameState.currentPlayer === 1 ? 2 : 1;
+                    const nextMessage =
+                        gameState.currentPlayer === 1
+                            ? messages.player2Turn
+                            : messages.player1Turn;
+                    // Returning state after new move
+                    return {
+                        ...gameState,
+                        board: boardClone,
+                        currentPlayer: nextPlayer,
+                        message: nextMessage
+                    };
                 }
             }
             return gameState;
@@ -127,11 +123,6 @@ const App = () => {
             dispatch({
                 type: "make-move",
                 columnIndex: columnIndex
-            });
-
-            // Switching player
-            dispatch({
-                type: "toggle-player"
             });
         }
     };
