@@ -15,7 +15,7 @@ type Action =
     | { type: "reset-game" }
     | { type: "toggle-player" }
     | { type: "end-game"; result: number | string }
-    | { type: "make-move"; columnIndex: number }
+    | { type: "make-move"; columnIndex: number };
 
 const messages = {
     player1Turn: "First Player's (Yellow) Move!",
