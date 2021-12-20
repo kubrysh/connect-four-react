@@ -1,4 +1,4 @@
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent } from "./test-utils";
 import App from "./App";
 
 afterEach(() => {
