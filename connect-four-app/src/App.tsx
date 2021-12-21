@@ -14,7 +14,8 @@ interface GameState {
 type Action =
     | { type: "reset-game" }
     | { type: "end-game"; result: number | string }
-    | { type: "make-move"; columnIndex: number };
+    | { type: "make-move"; rowIndex: number; columnIndex: number }
+    | { type: "toggle-player" };
 
 const messages = {
     player1Turn: "First Player's (Yellow) Move!",
@@ -61,26 +62,32 @@ const gameStateReducer = (gameState: GameState, action: Action) => {
         case "make-move":
             // Making deep copy of the board
             const boardClone: GameState["board"] = copyArray(gameState.board);
-            // Checking if move is possible and implementing it
-            for (let i = 5; i >= 0; i--) {
-                if (boardClone[i][action.columnIndex] === 0) {
-                    boardClone[i][action.columnIndex] = gameState.currentPlayer;
-                    // Switching player
-                    const nextPlayer = gameState.currentPlayer === 1 ? 2 : 1;
-                    const nextMessage =
-                        gameState.currentPlayer === 1
-                            ? messages.player2Turn
-                            : messages.player1Turn;
-                    // Returning state after new move
+            // Implementing the move
+            boardClone[action.rowIndex][action.columnIndex] =
+                gameState.currentPlayer;
+            // Returning state after new move
+            return {
+                ...gameState,
+                board: boardClone
+            };
+        case "toggle-player":
+            // Switching player
+            switch (gameState.currentPlayer) {
+                case 1:
                     return {
                         ...gameState,
-                        board: boardClone,
-                        currentPlayer: nextPlayer,
-                        message: nextMessage
+                        currentPlayer: 2,
+                        message: messages.player2Turn
                     };
-                }
+                case 2:
+                    return {
+                        ...gameState,
+                        currentPlayer: 1,
+                        message: messages.player1Turn
+                    };
+                default:
+                    return gameState;
             }
-            return gameState;
         default:
             return gameState;
     }
@@ -110,7 +117,7 @@ const App = () => {
         }
     }, [gameState.board, gameState.gameEnded]);
 
-    const resetGame = () => {
+    const handleResetGame = () => {
         dispatch({
             type: "reset-game"
         });
@@ -118,11 +125,22 @@ const App = () => {
 
     const handleMove = (columnIndex: number) => {
         if (!gameState.gameEnded) {
-            // Making move
-            dispatch({
-                type: "make-move",
-                columnIndex: columnIndex
-            });
+            // Checking if the move is possible to make
+            for (let rowIndex = 5; rowIndex >= 0; rowIndex--) {
+                if (gameState.board[rowIndex][columnIndex] === 0) {
+                    // Making move
+                    dispatch({
+                        type: "make-move",
+                        rowIndex: rowIndex,
+                        columnIndex: columnIndex
+                    });
+                    // Switching player
+                    dispatch({
+                        type: "toggle-player"
+                    });
+                    return;
+                }
+            }
         }
     };
 
@@ -133,7 +151,7 @@ const App = () => {
             </header>
             <main>
                 <div className="game-info-container">
-                    <button onClick={resetGame}>New game</button>
+                    <button onClick={handleResetGame}>New game</button>
                     <p data-testid="game-info">{gameState.message}</p>
                 </div>
                 <div className="game-board" role="grid">
