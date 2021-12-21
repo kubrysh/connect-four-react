@@ -15,10 +15,17 @@ export const endGame = (payload: Result) => {
     return action;
 };
 
-export const makeMove = (payload: ColumnIndex) => {
+export const makeMove = (payload: Indexes) => {
     const action: Action = {
         type: actionTypes.MAKE_MOVE,
         payload
+    };
+    return action;
+};
+
+export const togglePlayer = () => {
+    const action: Action = {
+        type: actionTypes.TOGGLE_PLAYER
     };
     return action;
 };

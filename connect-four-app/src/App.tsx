@@ -1,7 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./App.css";
-import { resetGame, endGame, makeMove } from "./store/actionCreators";
+import {
+    resetGame,
+    endGame,
+    makeMove,
+    togglePlayer
+} from "./store/actionCreators";
 import GameBoard from "./components/GameBoard";
 import checkWin from "./utils/checkWin";
 
@@ -36,8 +41,21 @@ const App = () => {
 
     const handleMove = (columnIndex: number) => {
         if (!gameEnded) {
-            // Making move
-            dispatch(makeMove({ columnIndex: columnIndex }));
+            // Checking if the move is possible to make
+            for (let rowIndex = 5; rowIndex >= 0; rowIndex--) {
+                if (board[rowIndex][columnIndex] === 0) {
+                    // Making move
+                    dispatch(
+                        makeMove({
+                            rowIndex: rowIndex,
+                            columnIndex: columnIndex
+                        })
+                    );
+                    // Switching player
+                    dispatch(togglePlayer());
+                    return;
+                }
+            }
         }
     };
 

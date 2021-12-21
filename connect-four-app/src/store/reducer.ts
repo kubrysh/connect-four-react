@@ -39,27 +39,32 @@ const reducer = (gameState = initialGameState, action: Action): GameState => {
         case actionTypes.MAKE_MOVE:
             // Making deep copy of the board
             const boardClone: GameState["board"] = copyArray(gameState.board);
-            // Checking if move is possible and implementing it
-            for (let i = 5; i >= 0; i--) {
-                if (boardClone[i][action.payload.columnIndex] === 0) {
-                    boardClone[i][action.payload.columnIndex] =
-                        gameState.currentPlayer;
-                    // Switching player
-                    const nextPlayer = gameState.currentPlayer === 1 ? 2 : 1;
-                    const nextMessage =
-                        gameState.currentPlayer === 1
-                            ? messages.player2Turn
-                            : messages.player1Turn;
-                    // Returning state after new move
+            // Implementing the move
+            boardClone[action.payload.rowIndex][action.payload.columnIndex] =
+                gameState.currentPlayer;
+            // Returning state after new move
+            return {
+                ...gameState,
+                board: boardClone
+            };
+        case actionTypes.TOGGLE_PLAYER:
+            // Switching player
+            switch (gameState.currentPlayer) {
+                case 1:
                     return {
                         ...gameState,
-                        board: boardClone,
-                        currentPlayer: nextPlayer,
-                        message: nextMessage
+                        currentPlayer: 2,
+                        message: messages.player2Turn
                     };
-                }
+                case 2:
+                    return {
+                        ...gameState,
+                        currentPlayer: 1,
+                        message: messages.player1Turn
+                    };
+                default:
+                    return gameState;
             }
-            return gameState;
         default:
             return gameState;
     }
