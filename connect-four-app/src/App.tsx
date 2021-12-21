@@ -13,7 +13,6 @@ interface GameState {
 
 type Action =
     | { type: "reset-game" }
-    | { type: "toggle-player" }
     | { type: "end-game"; result: number | string }
     | { type: "make-move"; columnIndex: number };
 
