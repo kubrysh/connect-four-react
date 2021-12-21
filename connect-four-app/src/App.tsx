@@ -1,22 +1,14 @@
 import React, { useEffect, useRef } from "react";
-import { useSelector, shallowEqual, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import "./App.css";
 import { resetGame, endGame, makeMove } from "./store/actionCreators";
 import GameBoard from "./components/GameBoard";
 import checkWin from "./utils/checkWin";
 
 const App = () => {
-    const board = useSelector((state: GameState) => state.board, shallowEqual);
-
-    const gameEnded = useSelector(
-        (state: GameState) => state.gameEnded,
-        shallowEqual
-    );
-
-    const message = useSelector(
-        (state: GameState) => state.message,
-        shallowEqual
-    );
+    const board = useSelector((state: GameState) => state.board);
+    const gameEnded = useSelector((state: GameState) => state.gameEnded);
+    const message = useSelector((state: GameState) => state.message);
 
     const dispatch = useDispatch();
 

@@ -2,7 +2,6 @@ import copyArray from "../utils/copyArray";
 import * as actionTypes from "./actionTypes";
 import messages from "../utils/messages";
 
-
 const initialGameState: GameState = {
     board: Array(6).fill(Array(7).fill(0)), // Creating 6x7 matrix of zeros which will be representing game cells
     currentPlayer: 1,
