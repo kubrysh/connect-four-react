@@ -36,6 +36,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm ci, test and build
         run: |
+          cd connect-four-app
           npm ci
           CI=true npm test
           CI=true npm run build
