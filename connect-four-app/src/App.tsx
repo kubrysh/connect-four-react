@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useRef } from "react";
+import React, { useReducer, useEffect } from "react";
 import "./App.css";
 import GameBoard from "./components/GameBoard";
 import checkWin from "./utils/checkWin";
@@ -8,11 +8,13 @@ interface GameState {
     board: number[][];
     currentPlayer: number;
     gameEnded: boolean;
+    newGame: boolean;
     message: string;
 }
 
 type Action =
     | { type: "reset-game" }
+    | { type: "game-started" }
     | { type: "end-game"; result: number | string }
     | { type: "make-move"; rowIndex: number; columnIndex: number }
     | { type: "toggle-player" };
@@ -29,6 +31,7 @@ const initialGameState: GameState = {
     board: Array(6).fill(Array(7).fill(0)), // Creating 6x7 matrix of zeros which will be representing game cells
     currentPlayer: 1,
     gameEnded: false,
+    newGame: true,
     message: messages.player1Turn
 };
 
@@ -36,6 +39,11 @@ const gameStateReducer = (gameState: GameState, action: Action) => {
     switch (action.type) {
         case "reset-game":
             return initialGameState;
+        case "game-started":
+            return {
+                ...gameState,
+                newGame: false
+            };
         case "end-game":
             switch (action.result) {
                 case 1:
@@ -99,13 +107,11 @@ const App = () => {
         initialGameState
     );
 
-    const initialRender = useRef(true);
-
     // Checking for win or draft on each board state update
     useEffect(() => {
         // Preventing checking the result on initial render
-        if (initialRender.current) {
-            initialRender.current = false;
+        if (gameState.newGame) {
+            dispatch({ type: "game-started" });
             return;
         }
         // Checking for a win & handling results
@@ -113,8 +119,12 @@ const App = () => {
             const result = checkWin(gameState.board);
             if (result) {
                 dispatch({ type: "end-game", result: result });
+            } else {
+                // Switching player
+                dispatch({ type: "toggle-player" });
             }
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameState.board, gameState.gameEnded]);
 
     const handleResetGame = () => {
@@ -133,10 +143,6 @@ const App = () => {
                         type: "make-move",
                         rowIndex: rowIndex,
                         columnIndex: columnIndex
-                    });
-                    // Switching player
-                    dispatch({
-                        type: "toggle-player"
                     });
                     return;
                 }
