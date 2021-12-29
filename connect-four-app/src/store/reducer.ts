@@ -6,6 +6,7 @@ const initialGameState: GameState = {
     board: Array(6).fill(Array(7).fill(0)), // Creating 6x7 matrix of zeros which will be representing game cells
     currentPlayer: 1,
     gameEnded: false,
+    newGame: true,
     message: messages.player1Turn
 };
 
@@ -13,6 +14,11 @@ const reducer = (gameState = initialGameState, action: Action): GameState => {
     switch (action.type) {
         case actionTypes.RESET_GAME:
             return initialGameState;
+        case actionTypes.GAME_STARTED:
+            return {
+                ...gameState,
+                newGame: false
+            }
         case actionTypes.END_GAME:
             switch (action.payload.result) {
                 case 1:

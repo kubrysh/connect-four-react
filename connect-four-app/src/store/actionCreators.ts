@@ -7,6 +7,13 @@ export const resetGame = () => {
     return action;
 };
 
+export const gameStarted = () => {
+    const action: Action = {
+        type: actionTypes.GAME_STARTED
+    };
+    return action;
+};
+
 export const endGame = (payload: Result) => {
     const action: Action = {
         type: actionTypes.END_GAME,

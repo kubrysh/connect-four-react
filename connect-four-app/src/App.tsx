@@ -1,11 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./App.css";
 import {
     resetGame,
     endGame,
     makeMove,
-    togglePlayer
+    togglePlayer,
+    gameStarted
 } from "./store/actionCreators";
 import GameBoard from "./components/GameBoard";
 import checkWin from "./utils/checkWin";
@@ -13,17 +14,16 @@ import checkWin from "./utils/checkWin";
 const App = () => {
     const board = useSelector((state: GameState) => state.board);
     const gameEnded = useSelector((state: GameState) => state.gameEnded);
+    const newGame = useSelector((state: GameState) => state.newGame);
     const message = useSelector((state: GameState) => state.message);
 
     const dispatch = useDispatch();
 
-    const initialRender = useRef(true);
-
     // Checking for win or tie on each board state update
     useEffect(() => {
         // Preventing checking the result on initial render
-        if (initialRender.current) {
-            initialRender.current = false;
+        if (newGame) {
+            dispatch(gameStarted());
             return;
         }
         // Checking for a win & handling results & switching player
@@ -36,6 +36,7 @@ const App = () => {
                 dispatch(togglePlayer());
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [board, gameEnded, dispatch]);
 
     const handleResetGame = () => {
