@@ -26,11 +26,14 @@ const App = () => {
             initialRender.current = false;
             return;
         }
-        // Checking for a win & handling results
+        // Checking for a win & handling results & switching player
         if (!gameEnded) {
             const result = checkWin(board);
             if (result) {
                 dispatch(endGame({ result: result }));
+            } else {
+                // Switching player
+                dispatch(togglePlayer());
             }
         }
     }, [board, gameEnded, dispatch]);
@@ -51,8 +54,6 @@ const App = () => {
                             columnIndex: columnIndex
                         })
                     );
-                    // Switching player
-                    dispatch(togglePlayer());
                     return;
                 }
             }
