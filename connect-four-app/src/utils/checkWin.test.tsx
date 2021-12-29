@@ -122,8 +122,8 @@ test("Absence of any win should return false", () => {
     ).toBe(false);
 });
 
-// Draft
-test('In case of no empty cells remaining, the return should be "draft"', () => {
+// Tie
+test('In case of no empty cells remaining, the return should be "tie"', () => {
     expect(
         checkWin([
             [2, 2, 1, 1, 2, 2, 1],
@@ -133,5 +133,5 @@ test('In case of no empty cells remaining, the return should be "draft"', () => 
             [2, 2, 1, 1, 2, 2, 1],
             [1, 1, 2, 2, 1, 1, 2]
         ])
-    ).toBe("draft");
+    ).toBe("tie");
 });

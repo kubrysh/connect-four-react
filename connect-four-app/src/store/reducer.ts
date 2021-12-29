@@ -27,11 +27,11 @@ const reducer = (gameState = initialGameState, action: Action): GameState => {
                         gameEnded: true,
                         message: messages.player2Won
                     };
-                case "draft":
+                case "tie":
                     return {
                         ...gameState,
                         gameEnded: true,
-                        message: messages.draft
+                        message: messages.tie
                     };
                 default:
                     return gameState;

@@ -53,10 +53,10 @@ const checkDiagRL = (board: number[][]) => {
     return false;
 };
 
-const checkDraft = (board: number[][]) => {
+const checkTie = (board: number[][]) => {
     // Checking if there are none empty cells left
     if (board.length !== 0 && board.flat().every((cell) => cell !== 0)) {
-        return "draft";
+        return "tie";
     }
     return false;
 };
@@ -67,7 +67,7 @@ const checkWin = (board: number[][]) => {
         checkVertically(board) ||
         checkDiagLR(board) ||
         checkDiagRL(board) ||
-        checkDraft(board)
+        checkTie(board)
     );
 };
 

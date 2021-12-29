@@ -103,8 +103,8 @@ test("Win message should be displayed when second player wins", () => {
     expect(infoElement).toHaveTextContent("Second Player (Red) Won!");
 });
 
-// Checking if draft message is displayed in case of draft
-test("Draft message should be displayed when draft occurs", () => {
+// Checking if tie message is displayed in case of a tie
+test("Tie message should be displayed when tie occurs", () => {
     render(<App />);
     const gameBoard = screen.getAllByRole("gridcell");
     // Making moves
@@ -116,7 +116,7 @@ test("Draft message should be displayed when draft occurs", () => {
     // Checking if game info message updated
     const infoElement = screen.getByTestId("game-info");
     expect(infoElement).toBeInTheDocument();
-    expect(infoElement).toHaveTextContent("Draft!");
+    expect(infoElement).toHaveTextContent("Tie!");
 });
 
 // Checking if no further moves could be made after game ended in result of win

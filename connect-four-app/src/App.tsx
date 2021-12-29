@@ -19,7 +19,7 @@ const App = () => {
 
     const initialRender = useRef(true);
 
-    // Checking for win or draft on each board state update
+    // Checking for win or tie on each board state update
     useEffect(() => {
         // Preventing checking the result on initial render
         if (initialRender.current) {

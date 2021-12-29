@@ -3,7 +3,7 @@ const messages = {
     player2Turn: "Second Player's (Red) Move!",
     player1Won: "First Player (Yellow) Won!",
     player2Won: "Second Player (Red) Won!",
-    draft: "Draft!"
+    tie: "Tie!"
 };
 
 export default messages;
