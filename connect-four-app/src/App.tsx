@@ -24,7 +24,7 @@ const messages = {
     player2Turn: "Second Player's (Red) Move!",
     player1Won: "First Player (Yellow) Won!",
     player2Won: "Second Player (Red) Won!",
-    draft: "Draft!"
+    tie: "Tie!"
 };
 
 const initialGameState: GameState = {
@@ -58,11 +58,11 @@ const gameStateReducer = (gameState: GameState, action: Action) => {
                         gameEnded: true,
                         message: messages.player2Won
                     };
-                case "draft":
+                case "tie":
                     return {
                         ...gameState,
                         gameEnded: true,
-                        message: messages.draft
+                        message: messages.tie
                     };
                 default:
                     return gameState;
@@ -107,7 +107,7 @@ const App = () => {
         initialGameState
     );
 
-    // Checking for win or draft on each board state update
+    // Checking for win or tie on each board state update
     useEffect(() => {
         // Preventing checking the result on initial render
         if (gameState.newGame) {
